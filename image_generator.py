@@ -108,7 +108,7 @@ class ImageGenerator:
 		img = Image.new("RGB", (realRes, imgRes), color = "black")
 		pixels = img.load()
 		
-		for i in range(int(img.size[1] / 2)):
+		for i in range(img.size[1]):
 			for j in range(img.size[0]):
 				realOffset = (bottomRightPoint.real - topLeftPoint.real) * (j / mpf(realRes))
 				imgOffset = (-(bottomRightPoint.imag - topLeftPoint.imag)) * (i / mpf(imgRes))
@@ -119,13 +119,6 @@ class ImageGenerator:
 				pixels[j,i] = self.iterationsToColor(iters)
 					
 				print("\rPixel (" + str(i) + "," + str(j) + ")", end = "")
-				
-		# The fractal is symmetrical, this should allow to save 50% of computations
-		for i in range(int(img.size[1] / 2)):
-			for j in range(img.size[0]):
-				copyToI = img.size[1] - 1 - i
-				copyToJ = j
-				pixels[copyToJ, copyToI] = pixels[j, i]
 		
 		img.save("test.png")
 		print("\n\nComplete!\n")

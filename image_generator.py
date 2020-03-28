@@ -120,5 +120,5 @@ class ImageGenerator:
 					
 				print("\rPixel (" + str(i) + "," + str(j) + ")", end = "")
 		
-		img.save("test.png")
 		print("\n\nComplete!\n")
+		return img

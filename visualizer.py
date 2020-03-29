@@ -70,6 +70,8 @@ class Visualizer:
 		self.realRes = resolution[0]
 		self.imgRes = resolution[1]
 		
+		self.isZooming = False
+		
 		def center_image_callback(event):
 			"""Callback for clicking somewhere inside the fractal image.
 			This will set the center to wherever the click was made
@@ -93,6 +95,28 @@ class Visualizer:
 		
 		self.canvas.bind("<Button-1>", center_image_callback)
 		
+		def zoom_image_callback(event):
+			"""Callback for moving the mouse wheel up or down
+			This will zoom in or out the fractal, respectively
+			"""
+			if (not self.isZooming):
+				
+				self.isZooming = True
+				if (event.delta > 0):
+					realZoomIn = (self.bottomRightPoint.real - self.topLeftPoint.real) / 4
+					imgZoomIn = -(self.bottomRightPoint.imag - self.topLeftPoint.imag) / 4
+					self.topLeftPoint = mpc(self.topLeftPoint.real + realZoomIn, self.topLeftPoint.imag - imgZoomIn)
+					self.bottomRightPoint = mpc(self.bottomRightPoint.real - realZoomIn, self.bottomRightPoint.imag + imgZoomIn)
+				else:
+					realZoomOut = (self.bottomRightPoint.real - self.topLeftPoint.real) / 2
+					imgZoomOut = -(self.bottomRightPoint.imag - self.topLeftPoint.imag) / 2
+					self.topLeftPoint = mpc(self.topLeftPoint.real - realZoomOut, self.topLeftPoint.imag + imgZoomOut)
+					self.bottomRightPoint = mpc(self.bottomRightPoint.real + realZoomOut, self.bottomRightPoint.imag - imgZoomOut)
+				
+				self.draw()
+		
+		self.canvas.bind("<MouseWheel>", zoom_image_callback)
+		
 		
 	def draw(self):
 		"""Draws the fractal in the canvas of the main window
@@ -113,12 +137,14 @@ class Visualizer:
 										   int(self.imgRes / 2), 
 										   image = image)
 		
+		if (self.isZooming):
+			self.isZooming = False
 		self.gui.mainloop()
 		
 
 if (__name__ == "__main__"):
 	
-	window = Visualizer(max_iters = 5, resolution = (400,400))
+	window = Visualizer(max_iters = 20, resolution = (400,400))
 	window.draw()
 		
 		
